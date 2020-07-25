@@ -24,3 +24,7 @@ pub(super) fn sys_clone(context: &mut Context, new_pc: usize, new_sp: usize, use
         }
     }
 }
+
+pub(super) fn sys_gettid() -> SyscallResult {
+    SyscallResult::Proceed(PROCESSOR.lock().current_thread().id)
+}

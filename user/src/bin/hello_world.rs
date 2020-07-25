@@ -19,10 +19,12 @@ pub extern "C" fn main() -> usize {
         );
     }
     println!("Hello world from user mode program!");
+    println!("Main thread. TID = {}", user_lib::sys_gettid());
     0
 }
 
 pub extern "C" fn thread_entry(value: usize) -> usize {
     println!("Thread started. Arg = {}", value);
+    println!("Created thread. TID = {}", user_lib::sys_gettid());
     user_lib::sys_exit(0)
 }

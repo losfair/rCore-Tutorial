@@ -7,6 +7,7 @@ const SYSCALL_READ: usize = 63;
 const SYSCALL_WRITE: usize = 64;
 const SYSCALL_EXIT: usize = 93;
 const SYSCALL_CLONE: usize = 256;
+const SYSCALL_GETTID: usize = 257;
 
 /// 将参数放在对应寄存器中，并执行 `ecall`
 fn syscall(id: usize, arg0: usize, arg1: usize, arg2: usize) -> isize {
@@ -54,6 +55,10 @@ pub unsafe fn sys_clone(pc: usize, sp: usize, user_context: usize) -> isize {
         sp,
         user_context,
     )
+}
+
+pub fn sys_gettid() -> isize {
+    syscall(SYSCALL_GETTID, 0, 0, 0)
 }
 
 /// 退出并返回数值
