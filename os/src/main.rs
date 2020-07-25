@@ -75,13 +75,15 @@ pub extern "C" fn rust_main(_hart_id: usize, dtb_pa: PhysicalAddress) -> ! {
         // 创建一个内核进程
         let kernel_process = Process::new_kernel().unwrap();
         // 为这个进程创建多个线程，并设置入口均为 sample_process，而参数不同
+        processor.add_thread(create_user_process("hello_world"));
+        /*
         for i in 1..9usize {
             processor.add_thread(create_kernel_thread(
                 kernel_process.clone(),
                 sample_process as usize,
                 Some(&[i]),
             ));
-        }
+        }*/
     }
 
     extern "C" {

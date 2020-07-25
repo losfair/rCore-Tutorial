@@ -6,6 +6,7 @@ pub const STDOUT: usize = 1;
 const SYSCALL_READ: usize = 63;
 const SYSCALL_WRITE: usize = 64;
 const SYSCALL_EXIT: usize = 93;
+const SYSCALL_CLONE: usize = 256;
 
 /// 将参数放在对应寄存器中，并执行 `ecall`
 fn syscall(id: usize, arg0: usize, arg1: usize, arg2: usize) -> isize {
@@ -43,6 +44,15 @@ pub fn sys_write(fd: usize, buffer: &[u8]) -> isize {
         fd,
         buffer as *const [u8] as *const u8 as usize,
         buffer.len(),
+    )
+}
+
+pub unsafe fn sys_clone(pc: usize, sp: usize, user_context: usize) -> isize {
+    syscall(
+        SYSCALL_CLONE,
+        pc,
+        sp,
+        user_context,
     )
 }
 

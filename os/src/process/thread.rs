@@ -54,6 +54,36 @@ impl Thread {
         self.inner().context.replace(context);
     }
 
+    /// Creates a copy of this thread that shares the same `Process`.
+    pub fn fork(
+        &self,
+        context: &Context,
+        pc: usize,
+        sp: usize,
+        user_context: usize,
+    ) -> MemoryResult<Arc<Thread>> {
+        let stack = self.process.alloc_page_range(STACK_SIZE, Flags::READABLE | Flags::WRITABLE)?;
+    
+        let mut new_context = context.clone();
+
+        new_context.sepc = pc;
+        new_context.set_sp(sp);
+        new_context.x[10] = user_context;
+        Ok(Arc::new(Thread {
+            id: unsafe {
+                THREAD_COUNTER += 1;
+                THREAD_COUNTER
+            },
+            stack,
+            process: self.process.clone(),
+            inner: Mutex::new(ThreadInner {
+                context: Some(new_context),
+                sleeping: false,
+                dead: false,
+            }),
+        }))
+    }
+
     /// 创建一个线程
     pub fn new(
         process: Arc<Process>,
