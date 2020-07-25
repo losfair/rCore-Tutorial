@@ -8,6 +8,8 @@ const SYSCALL_WRITE: usize = 64;
 const SYSCALL_EXIT: usize = 93;
 const SYSCALL_CLONE: usize = 256;
 const SYSCALL_GETTID: usize = 257;
+const SYSCALL_OPEN: usize = 258;
+const SYSCALL_PIPE: usize = 259;
 
 /// 将参数放在对应寄存器中，并执行 `ecall`
 fn syscall(id: usize, arg0: usize, arg1: usize, arg2: usize) -> isize {
@@ -65,4 +67,23 @@ pub fn sys_gettid() -> isize {
 pub fn sys_exit(code: isize) -> ! {
     syscall(SYSCALL_EXIT, code as usize, 0, 0);
     unreachable!()
+}
+
+pub fn sys_open(path: &str, mode: u32) -> isize {
+    let path = path.as_bytes();
+    syscall(
+        SYSCALL_OPEN,
+        path.as_ptr() as _,
+        path.len(),
+        mode as _,
+    )
+}
+
+pub fn sys_pipe() -> isize {
+    syscall(
+        SYSCALL_PIPE,
+        0,
+        0,
+        0,
+    )
 }
